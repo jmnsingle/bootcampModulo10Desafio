@@ -1,10 +1,11 @@
 import React from 'react';
+import { Image } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import Header from '~/Components/Header';
+import logo from '~/assets/logoH.png';
 
 import Sign from '~/pages/Sign';
 
@@ -28,7 +29,7 @@ export default createAppContainer(
             {
               defaultNavigationOptions: {
                 headerTintColor: '#fc2b6e',
-                header: ({ navigation }) => <Header navigation={navigation} />,
+                // header: ({ navigation }) => <Header navigation={navigation} />,
               },
             }
           ),
@@ -47,8 +48,14 @@ export default createAppContainer(
               AnswerHelp,
             },
             {
+              headerLayoutPreset: 'center',
+              headerBackTitleVisible: false,
               defaultNavigationOptions: {
-                header: ({ navigation }) => <Header navigation={navigation} />,
+                headerLeftContainerStyle: {
+                  marginLeft: 20,
+                },
+                headerTitle: <Image source={logo} />,
+                headerTintColor: '#fc2b6e',
               },
             }
           ),
