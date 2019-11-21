@@ -1,5 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { formatRelative, parseISO } from 'date-fns';
+import { withNavigationFocus } from 'react-navigation';
+import { formatRelative, parseISO, subHours } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -14,34 +15,53 @@ import {
   DateCheckin,
 } from './styles';
 
-export default function Checkin({ navigation }) {
+function Checkin({ navigation, isFocused }) {
   const [students, setStudents] = useState([]);
 
   const student = navigation.getParam('student');
 
-  useEffect(() => {
-    async function loadCheckins() {
-      const response = await api.get(`/students/${student}`);
+  async function loadCheckins() {
+    console.log('entrou na funcao');
+    const response = await api.get(`/students/${student.id}/checkins`);
 
-      const data = response.data.map(date =>
-        formatRelative(parseISO(date.created_at), new Date(), {
-          locale: pt,
-        })
-      );
+    const data = response.data.checkins.map(date =>
+      formatRelative(parseISO(date.createdAt), new Date(), {
+        locale: pt,
+      })
+    );
 
-      console.log(data);
-      setStudents(data);
-    }
-    loadCheckins();
-  });
-
-  function handleNewCheckin() {
-    const response = api.post(`/students/${student.student_id}/checkins`);
-
-    console.log(response.data);
-
-    setStudents(response.data);
+    setStudents(data);
   }
+
+  async function handleNewCheckin() {
+    try {
+      /* const validInterval = await api.get(`/students/${student.id}/checkins`);
+
+      const interval =
+        validInterval.data.checkins[validInterval.data.checkins.length - 1];
+
+      console.log(interval.dt_checkin);
+      console.log(subHours(new Date(), 1));
+      if (interval.dt_checkin <= subHours(new Date(), 1)) {
+        console.log('entrouqui');
+        alert('Intevalo de checkins inválido');
+      } else { */
+      const response = await api.post(
+        `/students/${student.student_id}/checkins`
+      );
+      setStudents(...students, response.data);
+      loadCheckins();
+    } catch (error) {
+      alert('Limite de checkins na semana excedido');
+    }
+  }
+
+  useEffect(() => {
+    if (isFocused) {
+      loadCheckins();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused]);
 
   return (
     <Container>
@@ -50,11 +70,11 @@ export default function Checkin({ navigation }) {
       </Button>
       <FlatList
         data={students}
-        keyExtractor={item => String(item.id)}
-        renderItem={({ item }) => (
+        keyExtractor={({ item }) => item}
+        renderItem={item => (
           <ItemListCheckin>
-            <NumberCheckin>Check-in #{item.id}</NumberCheckin>
-            <DateCheckin>{item.dateFormatted}</DateCheckin>
+            <NumberCheckin>Check-in #{item.index}</NumberCheckin>
+            <DateCheckin>{item.item}</DateCheckin>
           </ItemListCheckin>
         )}
       />
@@ -68,3 +88,5 @@ Checkin.navigationOptions = {
     <Icon name="edit-location" size={25} color={tintColor} />
   ),
 };
+
+export default withNavigationFocus(Checkin);
