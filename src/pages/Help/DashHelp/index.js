@@ -1,16 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withNavigationFocus } from 'react-navigation';
+import { useSelector } from 'react-redux';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { FlatList } from 'react-native';
 
 import api from '~/services/api';
+import Button from '~/components/Button';
 
 import {
   Container,
-  Button,
-  TextButton,
   Content,
   ContentHeader,
   HeaderLeft,
@@ -20,10 +20,17 @@ import {
 } from './styles';
 
 function DashHelp({ navigation, isFocused }) {
+  const student_id = useSelector(state => state.auth.student_id.id);
+
   const [helps, setHelps] = useState([]);
+  const [page, setPage] = useState(1);
 
   async function loadHelp() {
-    const response = await api.get(`/students/1/help_orders/answer`);
+    const response = await api.get(`/help_orders/${student_id}/answer`, {
+      params: {
+        page,
+      },
+    });
 
     const data = response.data.map(help => ({
       ...help,
@@ -44,11 +51,10 @@ function DashHelp({ navigation, isFocused }) {
   return (
     <Container>
       <Button
-        onPress={() =>
-          navigation.navigate('NewHelp', { student_id: helps[0].student_id })
-        }
+        background="confirm"
+        onPress={() => navigation.navigate('NewHelp')}
       >
-        <TextButton>Novo pedido de auxílio</TextButton>
+        Novo pedido de auxílio
       </Button>
 
       <FlatList

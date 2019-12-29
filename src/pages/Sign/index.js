@@ -11,10 +11,10 @@ export default function Sign() {
   const loading = useSelector(state => state.auth.loading);
   const dispath = useDispatch();
 
-  const [student, setStudent] = useState('');
+  const [studentId, setStudentId] = useState('');
 
-  function handleSubmit({ id }) {
-    dispath(sigInRequest(id));
+  function handleSubmit() {
+    dispath(sigInRequest(studentId));
   }
 
   return (
@@ -27,10 +27,10 @@ export default function Sign() {
           autoCapitalize="none"
           keyboardType="numeric"
           autoCorrect={false}
-          value={student}
-          onChangeText={setStudent}
+          value={studentId}
+          onChangeText={setStudentId}
         />
-        <Button onPress={() => handleSubmit}>
+        <Button onPress={() => handleSubmit()}>
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (

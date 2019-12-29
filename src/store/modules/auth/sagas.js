@@ -9,10 +9,12 @@ export function* signIn({ payload }) {
   const { id } = payload;
 
   try {
-    const response = yield call(api.post, `students/${id}`);
-    const { user } = response.data;
+    const response = yield call(api.post, 'sessionStudents', {
+      id,
+    });
+    const { id: student_id } = response.data;
 
-    yield put(sigInSuccess(user));
+    yield put(sigInSuccess(student_id));
   } catch (err) {
     yield put(signFailure());
     Alert.alert('Falha na autenticação, verifique seus dados');

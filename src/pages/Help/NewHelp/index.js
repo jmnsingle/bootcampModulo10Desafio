@@ -1,24 +1,30 @@
 import React, { useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import { useSelector } from 'react-redux';
+import { TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '~/services/api';
+import Button from '~/components/Button';
 
-import { Container, TextInput, Button, TextButton } from './styles';
+import { Container, TextInput } from './styles';
 
 export default function NewHelp({ navigation }) {
+  const student_id = useSelector(state => state.auth.student_id.id);
+
+  const [loading, setLoading] = useState(false);
   const [question, setQuestion] = useState('');
-  const student_id = navigation.getParam('student_id');
 
   async function handleQuestion() {
     if (question.length > 15) {
-      await api.post(`/students/${student_id}/help_orders/question`, {
+      setLoading(true);
+      await api.post(`/help_orders/${student_id}/question`, {
         question,
       });
-      alert('Pedido efetuado com sucesso!');
+      setLoading(false);
+      Alert.alert('Tudo certo', 'Pedido efetuado com sucesso!');
       navigation.navigate('DashHelp');
     } else {
-      alert('Pedido deve ter no mínimo 15 caracteres.');
+      Alert.alert('Atenção', 'Pedido deve ter no mínimo 15 caracteres.');
     }
   }
 
@@ -29,8 +35,8 @@ export default function NewHelp({ navigation }) {
         value={question}
         onChangeText={setQuestion}
       />
-      <Button onPress={handleQuestion}>
-        <TextButton>Enviar pedido</TextButton>
+      <Button background="confirm" loading={loading} onPress={handleQuestion}>
+        Enviar pedido
       </Button>
     </Container>
   );

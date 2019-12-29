@@ -27,6 +27,10 @@ export const QuestionTitle = styled.Text`
 `;
 
 export const QuestionDateHour = styled.Text`
+  flex: 1;
+  text-align: right;
+  margin-left: 15px;
+
   font-size: 16px;
   color: #a8a8a8;
 `;
@@ -41,35 +45,4 @@ export const QuestionText = styled.Text`
   font-size: 16px;
   line-height: 20px;
   color: #a8a8a8;
-`;
-
-export const ContentAnswerHeader = styled.View`
-  padding: 10px;
-
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-export const Answer = styled.ScrollView.attrs({
-  showsVerticalScrollIndicator: false,
-})`
-  padding: 10px;
-`;
-
-export const AnswerTitle = styled.Text`
-  font-size: 20;
-  font-weight: bold;
-`;
-
-export const AnswerDateHour = styled.Text`
-  font-size: 16px;
-  color: #a8a8a8;
-`;
-
-export const AnswerText = styled.Text`
-  font-size: 16px;
-  line-height: 20px;
-  color: #a8a8a8;
-  margin-bottom: 10px;
 `;

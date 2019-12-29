@@ -1,28 +1,28 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { withNavigationFocus } from 'react-navigation';
-import { formatRelative, parseISO, subHours } from 'date-fns';
+import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import api from '~/services/api';
 
+import api from '~/services/api';
+import Button from '~/components/Button';
 import {
   Container,
-  Button,
-  TextButton,
   ItemListCheckin,
   NumberCheckin,
   DateCheckin,
 } from './styles';
 
-function Checkin({ navigation, isFocused }) {
-  const [students, setStudents] = useState([]);
+function Checkin({ isFocused }) {
+  const student_id = useSelector(state => state.auth.student_id.id);
 
-  const student = navigation.getParam('student');
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   async function loadCheckins() {
-    console.log('entrou na funcao');
-    const response = await api.get(`/students/${student.id}/checkins`);
+    const response = await api.get(`/checkins/${student_id}`);
 
     const data = response.data.checkins.map(date =>
       formatRelative(parseISO(date.createdAt), new Date(), {
@@ -35,23 +35,14 @@ function Checkin({ navigation, isFocused }) {
 
   async function handleNewCheckin() {
     try {
-      /* const validInterval = await api.get(`/students/${student.id}/checkins`);
-
-      const interval =
-        validInterval.data.checkins[validInterval.data.checkins.length - 1];
-
-      console.log(interval.dt_checkin);
-      console.log(subHours(new Date(), 1));
-      if (interval.dt_checkin <= subHours(new Date(), 1)) {
-        console.log('entrouqui');
-        alert('Intevalo de checkins inválido');
-      } else { */
-      const response = await api.post(
-        `/students/${student.student_id}/checkins`
-      );
-      setStudents(...students, response.data);
+      setLoading(true);
+      const { data } = await api.post(`/checkins/${student_id}`);
+      setStudents(...students, data);
       loadCheckins();
+      setLoading(false);
+      alert('Checkin realizado com sucesso !');
     } catch (error) {
+      setLoading(false);
       alert('Limite de checkins na semana excedido');
     }
   }
@@ -65,8 +56,8 @@ function Checkin({ navigation, isFocused }) {
 
   return (
     <Container>
-      <Button onPress={handleNewCheckin}>
-        <TextButton>Novo check-in</TextButton>
+      <Button loading={loading} background="confirm" onPress={handleNewCheckin}>
+        Novo check-in
       </Button>
       <FlatList
         data={students}

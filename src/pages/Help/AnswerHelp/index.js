@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,47 +10,47 @@ import {
   ContentQuestionHeader,
   Question,
   QuestionTitle,
-  QuestionDateHour,
   QuestionText,
-  ContentAnswerHeader,
-  Answer,
-  AnswerTitle,
-  AnswerDateHour,
-  AnswerText,
+  QuestionDateHour,
 } from './styles';
 
 export default function AnswerHelp({ navigation }) {
   const help = navigation.getParam('help');
+  const [create, setCreate] = useState('');
+  const [update, setUpdate] = useState('');
 
-  const dateFormattedQuestion = formatRelative(
-    parseISO(help.createdAt),
-    new Date(),
-    { locale: pt }
-  );
-
-  /* const dateFormattedAnswer = formatRelative(
-    parseISO(help.answer_at),
-    new Date(),
-    { locale: pt }
-  ); */
+  useEffect(() => {
+    setCreate(
+      formatRelative(parseISO(help.createdAt), new Date(), {
+        locale: pt,
+      })
+    );
+    if (help.answer_at) {
+      setUpdate(
+        formatRelative(parseISO(help.answer_at), new Date(), {
+          locale: pt,
+        })
+      );
+    }
+  }, [help.answer_at, help.createdAt]);
 
   return (
     <Container>
       <Content>
         <ContentQuestionHeader>
           <QuestionTitle>PERGUNTA</QuestionTitle>
-          <QuestionDateHour>{dateFormattedQuestion}</QuestionDateHour>
+          <QuestionDateHour>{create}</QuestionDateHour>
         </ContentQuestionHeader>
         <Question>
           <QuestionText>{help.question}</QuestionText>
         </Question>
-        <ContentAnswerHeader>
-          <AnswerTitle>RESPOSTA</AnswerTitle>
-          <AnswerDateHour>{JSON.stringify(help.answer_at)}</AnswerDateHour>
-        </ContentAnswerHeader>
-        <Answer>
-          <AnswerText>{help.answer}</AnswerText>
-        </Answer>
+        <ContentQuestionHeader>
+          <QuestionTitle>RESPOSTA</QuestionTitle>
+          <QuestionDateHour>{update || 'Sem resposta'}</QuestionDateHour>
+        </ContentQuestionHeader>
+        <Question>
+          <QuestionText>{help.answer}</QuestionText>
+        </Question>
       </Content>
     </Container>
   );

@@ -6,23 +6,6 @@ export const Container = styled.View`
   background: #fafafa;
 `;
 
-export const Button = styled(RectButton)`
-  height: 46px;
-  border-radius: 4px;
-  margin: 15px 30px;
-  background: #fc2b6e;
-
-  align-self: stretch;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const TextButton = styled.Text`
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
-`;
-
 export const Content = styled(RectButton).attrs({
   elevation: 2,
 })`
@@ -52,6 +35,10 @@ export const TitleHeader = styled.Text`
 `;
 
 export const DateHourHeader = styled.Text`
+  flex: 1;
+  text-align: right;
+  margin-left: 15px;
+
   font-size: 16px;
   color: #a8a8a8;
 `;
