@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
+import { ActivityIndicator } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
 
-import api from '~/services/api';
 import logo from '~/assets/logo.png';
 import { Container, Content, Logo, Input, Button, TextButton } from './styles';
 
-export default function Sign({ navigation }) {
+import { sigInRequest } from '~/store/modules/auth/actions';
+
+export default function Sign() {
+  const loading = useSelector(state => state.auth.loading);
+  const dispath = useDispatch();
+
   const [student, setStudent] = useState('');
 
-  async function handleSubmit() {
-    try {
-      const response = await api.get(`/students/${student}`);
-
-      navigation.navigate('Checkin', { student: response.data });
-    } catch (err) {
-      console('erroaqui');
-    }
+  function handleSubmit({ id }) {
+    dispath(sigInRequest(id));
   }
 
   return (
@@ -30,8 +30,12 @@ export default function Sign({ navigation }) {
           value={student}
           onChangeText={setStudent}
         />
-        <Button onPress={handleSubmit}>
-          <TextButton>Entrar no sistema</TextButton>
+        <Button onPress={() => handleSubmit}>
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <TextButton>Entrar no sistema</TextButton>
+          )}
         </Button>
       </Content>
     </Container>

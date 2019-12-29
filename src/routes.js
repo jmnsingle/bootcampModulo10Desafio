@@ -1,84 +1,80 @@
 import React from 'react';
-import { Image } from 'react-native';
 import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import logo from '~/assets/logoH.png';
+import Header from '~/components/Header';
 
-import Sign from '~/pages/Sign';
+import SignIn from '~/pages/Sign';
 
 import Checkin from '~/pages/Checkin';
 import DashHelp from '~/pages/Help/DashHelp';
 import NewHelp from '~/pages/Help/NewHelp';
 import AnswerHelp from '~/pages/Help/AnswerHelp';
 
-export default createAppContainer(
-  createSwitchNavigator({
-    Switch: createSwitchNavigator({
-      Sign,
-    }),
-    Tab: createBottomTabNavigator(
+export default (signedIn = false) =>
+  createAppContainer(
+    createSwitchNavigator(
       {
-        Checkin: {
-          screen: createStackNavigator(
-            {
-              Checkin,
-            },
-            {
-              defaultNavigationOptions: {
-                headerTintColor: '#fc2b6e',
-                // header: ({ navigation }) => <Header navigation={navigation} />,
+        Sign: SignIn,
+        App: createBottomTabNavigator(
+          {
+            Checkin: createStackNavigator(
+              {
+                Checkin,
               },
-            }
-          ),
-          navigationOptions: {
-            tabBarLabel: 'Chek-ins',
-            tabBarIcon: ({ tintColor }) => (
-              <Icon name="edit-location" size={25} color={tintColor} />
-            ),
-          },
-        },
-        New: {
-          screen: createStackNavigator(
-            {
-              DashHelp,
-              NewHelp,
-              AnswerHelp,
-            },
-            {
-              headerLayoutPreset: 'center',
-              headerBackTitleVisible: false,
-              defaultNavigationOptions: {
-                headerLeftContainerStyle: {
-                  marginLeft: 20,
+              {
+                navigationOptions: {
+                  tabBarLabel: 'Check-ins',
+                  tabBarIcon: ({ tintColor }) => (
+                    <Icon name="edit-location" size={20} color={tintColor} />
+                  ),
                 },
-                headerTitle: <Image source={logo} />,
-                headerTintColor: '#fc2b6e',
-              },
-            }
-          ),
-          navigationOptions: {
-            tabBarLabel: 'Pedir ajuda',
-            tabBarIcon: ({ tintColor }) => (
-              <Icon name="live-help" size={25} color={tintColor} />
+                defaultNavigationOptions: {
+                  headerTitle: () => <Header />,
+                },
+              }
             ),
+            Help: {
+              screen: createStackNavigator(
+                {
+                  DashHelp,
+                  NewHelp,
+                  AnswerHelp,
+                },
+                {
+                  navigationOptions: {
+                    tabBarLabel: 'Ajuda',
+                    tabBarIcon: ({ tintColor }) => (
+                      <Icon name="live-help" size={20} color={tintColor} />
+                    ),
+                  },
+                  defaultNavigationOptions: {
+                    headerTitle: () => <Header />,
+                    headerTitleContainerStyle: {
+                      left: 0,
+                    },
+                    headerLeftContainerStyle: {
+                      marginLeft: 20,
+                    },
+                  },
+                }
+              ),
+            },
           },
-        },
+          {
+            resetOnBlur: true, // reseta a rota toda vez q ela voltar
+            tabBarOptions: {
+              keyboardHidesTabBar: true, // faz com que o teclado passo sobre a tab bar
+              activeTintColor: '#ee4d64',
+              inactiveTintColor: 'rgba(0,0,0,0.3)',
+            },
+          }
+        ),
       },
       {
-        tabBarOptions: {
-          keyboardHidesTabBar: true,
-          activeTintColor: '#fc2b6e',
-          inactiveTintColor: '#c2c0c0',
-          style: {
-            backgroundColor: '#fafafa',
-            height: 60,
-            padding: 10,
-          },
-        },
+        initialRouteName: signedIn ? 'App' : 'Sign',
       }
-    ),
-  })
-);
+    )
+  );
