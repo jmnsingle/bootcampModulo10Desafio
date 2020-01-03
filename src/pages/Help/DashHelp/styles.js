@@ -51,4 +51,7 @@ export const TextContent = styled.Text.attrs({
   color: #a8a8a8;
 `;
 
-export const Loading = styled.View``;
+export const Loading = styled.View`
+  align-items: center;
+  justify-content: center;
+`;

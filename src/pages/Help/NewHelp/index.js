@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { TouchableOpacity, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -53,3 +54,13 @@ NewHelp.navigationOptions = ({ navigation }) => ({
     </TouchableOpacity>
   ),
 });
+
+NewHelp.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }),
+};
+
+NewHelp.defaultProps = {
+  navigation: null,
+};

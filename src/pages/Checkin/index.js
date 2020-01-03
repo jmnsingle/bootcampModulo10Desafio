@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { withNavigationFocus } from 'react-navigation';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import { FlatList } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import api from '~/services/api';
 import Button from '~/components/Button';
@@ -73,11 +73,12 @@ function Checkin({ isFocused }) {
   );
 }
 
-Checkin.navigationOptions = {
-  tabBarLabel: 'Check-ins',
-  tabBarIcon: ({ tintColor }) => (
-    <Icon name="edit-location" size={25} color={tintColor} />
-  ),
+Checkin.propTypes = {
+  isFocused: PropTypes.bool,
+};
+
+Checkin.defaultProps = {
+  isFocused: false,
 };
 
 export default withNavigationFocus(Checkin);

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity } from 'react-native';
+import PropTypes from 'prop-types';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import {
   Container,
@@ -56,14 +55,12 @@ export default function AnswerHelp({ navigation }) {
   );
 }
 
-AnswerHelp.navigationOptions = ({ navigation }) => ({
-  headerLeft: () => (
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('DashHelp');
-      }}
-    >
-      <Icon name="chevron-left" size={35} color="#fc2b6e" />
-    </TouchableOpacity>
-  ),
-});
+AnswerHelp.propTypes = {
+  navigation: PropTypes.shape({
+    getParam: PropTypes.func.isRequired,
+  }),
+};
+
+AnswerHelp.defaultProps = {
+  navigation: null,
+};

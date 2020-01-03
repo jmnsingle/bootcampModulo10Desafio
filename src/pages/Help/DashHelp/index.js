@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { withNavigationFocus } from 'react-navigation';
 import { useSelector } from 'react-redux';
 import { formatRelative, parseISO } from 'date-fns';
@@ -21,6 +22,7 @@ import {
 } from './styles';
 
 function DashHelp({ navigation, isFocused }) {
+  console.tron.log(isFocused);
   const student_id = useSelector(state => state.auth.student_id.id);
 
   const [helps, setHelps] = useState([]);
@@ -96,35 +98,39 @@ function DashHelp({ navigation, isFocused }) {
         Novo pedido de auxílio
       </Button>
 
-      <FlatList
-        showsVerticalScrollIndicator={false}
-        data={helps}
-        keyExtractor={item => String(item.id)}
-        refreshing={refresh}
-        onRefresh={pageRefresh}
-        onEndReachedThreshold={0.1}
-        onEndReached={loadMore}
-        renderItem={({ item }) => (
-          <Content
-            onPress={() => navigation.navigate('AnswerHelp', { help: item })}
-          >
-            <ContentHeader>
-              <HeaderLeft>
-                <Icon
-                  name="check-circle"
-                  size={25}
-                  color={item.answer ? '#32a852' : '#a8a8a8'}
-                />
-                <TitleHeader color={item.answer}>
-                  {item.answer !== null ? 'Respondido' : 'Sem resposta'}
-                </TitleHeader>
-              </HeaderLeft>
-              <DateHourHeader>{item.dateFormatted}</DateHourHeader>
-            </ContentHeader>
-            <TextContent>{item.question}</TextContent>
-          </Content>
-        )}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#fc2b6e" />
+      ) : (
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={helps}
+          keyExtractor={item => String(item.id)}
+          refreshing={refresh}
+          onRefresh={pageRefresh}
+          onEndReachedThreshold={0.1}
+          onEndReached={loadMore}
+          renderItem={({ item }) => (
+            <Content
+              onPress={() => navigation.navigate('AnswerHelp', { help: item })}
+            >
+              <ContentHeader>
+                <HeaderLeft>
+                  <Icon
+                    name="check-circle"
+                    size={25}
+                    color={item.answer ? '#32a852' : '#a8a8a8'}
+                  />
+                  <TitleHeader color={item.answer}>
+                    {item.answer !== null ? 'Respondido' : 'Sem resposta'}
+                  </TitleHeader>
+                </HeaderLeft>
+                <DateHourHeader>{item.dateFormatted}</DateHourHeader>
+              </ContentHeader>
+              <TextContent>{item.question}</TextContent>
+            </Content>
+          )}
+        />
+      )}
       {loading && (
         <Loading>
           <ActivityIndicator size="large" color="#fc2b6e" />
@@ -134,11 +140,15 @@ function DashHelp({ navigation, isFocused }) {
   );
 }
 
-DashHelp.navigationOptions = {
-  tabBarLabel: 'Pedir ajuda',
-  tabBarIcon: ({ tintColor }) => (
-    <Icon name="live-help" size={25} color={tintColor} />
-  ),
+DashHelp.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }),
+  isFocused: PropTypes.bool.isRequired,
+};
+
+DashHelp.defaultProps = {
+  navigation: null,
 };
 
 export default withNavigationFocus(DashHelp);
