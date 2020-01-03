@@ -8,6 +8,7 @@ import Header from '~/components/Header';
 
 import SignIn from '~/pages/Sign';
 
+import Info from '~/pages/Info';
 import Checkin from '~/pages/Checkin';
 import DashHelp from '~/pages/Help/DashHelp';
 import NewHelp from '~/pages/Help/NewHelp';
@@ -62,11 +63,27 @@ export default (signedIn = false) =>
                 }
               ),
             },
+            Info: createStackNavigator(
+              {
+                Info,
+              },
+              {
+                navigationOptions: {
+                  tabBarLabel: 'Perfil',
+                  tabBarIcon: ({ tintColor }) => (
+                    <Icon name="person" size={20} color={tintColor} />
+                  ),
+                },
+                defaultNavigationOptions: {
+                  headerTitle: () => <Header />,
+                },
+              }
+            ),
           },
           {
-            resetOnBlur: true, // reseta a rota toda vez q ela voltar
+            resetOnBlur: true,
             tabBarOptions: {
-              keyboardHidesTabBar: true, // faz com que o teclado passo sobre a tab bar
+              keyboardHidesTabBar: true,
               activeTintColor: '#ee4d64',
               inactiveTintColor: 'rgba(0,0,0,0.3)',
             },

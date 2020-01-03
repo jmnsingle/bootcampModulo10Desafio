@@ -61,7 +61,7 @@ function Checkin({ isFocused }) {
       </Button>
       <FlatList
         data={students}
-        keyExtractor={({ item }) => item}
+        keyExtractor={(item, index) => String(index)}
         renderItem={item => (
           <ItemListCheckin>
             <NumberCheckin>Check-in #{item.index}</NumberCheckin>
