@@ -50,3 +50,5 @@ export const TextContent = styled.Text.attrs({
   margin-top: 10px;
   color: #a8a8a8;
 `;
+
+export const Loading = styled.View``;

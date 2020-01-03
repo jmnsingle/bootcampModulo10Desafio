@@ -8,7 +8,7 @@ import Header from '~/components/Header';
 
 import SignIn from '~/pages/Sign';
 
-import Info from '~/pages/Info';
+import Profile from '~/pages/Profile';
 import Checkin from '~/pages/Checkin';
 import DashHelp from '~/pages/Help/DashHelp';
 import NewHelp from '~/pages/Help/NewHelp';
@@ -63,9 +63,9 @@ export default (signedIn = false) =>
                 }
               ),
             },
-            Info: createStackNavigator(
+            Profile: createStackNavigator(
               {
-                Info,
+                Profile,
               },
               {
                 navigationOptions: {

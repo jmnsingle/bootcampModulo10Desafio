@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 import api from '~/services/api';
 import Button from '~/components/Button';
@@ -17,12 +17,16 @@ import {
   TitleHeader,
   DateHourHeader,
   TextContent,
+  Loading,
 } from './styles';
 
 function DashHelp({ navigation, isFocused }) {
   const student_id = useSelector(state => state.auth.student_id.id);
 
   const [helps, setHelps] = useState([]);
+  const [more, setMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [page, setPage] = useState(1);
 
   async function loadHelp() {
@@ -39,6 +43,41 @@ function DashHelp({ navigation, isFocused }) {
       }),
     }));
     setHelps(data);
+  }
+
+  async function pageRefresh() {
+    setRefresh(true);
+    const firstPage = 1;
+    const { data: response } = await api.get(
+      `/help_orders/${student_id}/answer`,
+      {
+        params: { page: firstPage },
+      }
+    );
+    setHelps(response);
+    setPage(firstPage);
+    setMore(true);
+    setRefresh(false);
+  }
+
+  async function loadMore() {
+    setLoading(true);
+    const newPage = page + 1;
+    const { data: response } = await api.get(
+      `/help_orders/${student_id}/answer`,
+      {
+        params: { page: newPage },
+      }
+    );
+    if (more && response.length > 0) {
+      const newData = [...helps, ...response];
+      setHelps(newData);
+      setPage(newPage);
+      setLoading(false);
+    } else {
+      setLoading(false);
+      setMore(false);
+    }
   }
 
   useEffect(() => {
@@ -61,6 +100,10 @@ function DashHelp({ navigation, isFocused }) {
         showsVerticalScrollIndicator={false}
         data={helps}
         keyExtractor={item => String(item.id)}
+        refreshing={refresh}
+        onRefresh={pageRefresh}
+        onEndReachedThreshold={0.1}
+        onEndReached={loadMore}
         renderItem={({ item }) => (
           <Content
             onPress={() => navigation.navigate('AnswerHelp', { help: item })}
@@ -82,6 +125,11 @@ function DashHelp({ navigation, isFocused }) {
           </Content>
         )}
       />
+      {loading && (
+        <Loading>
+          <ActivityIndicator size="large" color="#fc2b6e" />
+        </Loading>
+      )}
     </Container>
   );
 }
