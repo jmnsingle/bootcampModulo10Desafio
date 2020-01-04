@@ -32,6 +32,7 @@ function DashHelp({ navigation, isFocused }) {
   const [page, setPage] = useState(1);
 
   async function loadHelp() {
+    setLoading(true);
     const response = await api.get(`/help_orders/${student_id}/answer`, {
       params: {
         page,
@@ -45,6 +46,7 @@ function DashHelp({ navigation, isFocused }) {
       }),
     }));
     setHelps(data);
+    setLoading(false);
   }
 
   async function pageRefresh() {
@@ -98,39 +100,39 @@ function DashHelp({ navigation, isFocused }) {
         Novo pedido de auxílio
       </Button>
 
-      {loading ? (
-        <ActivityIndicator size="large" color="#fc2b6e" />
-      ) : (
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={helps}
-          keyExtractor={item => String(item.id)}
-          refreshing={refresh}
-          onRefresh={pageRefresh}
-          onEndReachedThreshold={0.1}
-          onEndReached={loadMore}
-          renderItem={({ item }) => (
-            <Content
-              onPress={() => navigation.navigate('AnswerHelp', { help: item })}
-            >
-              <ContentHeader>
-                <HeaderLeft>
-                  <Icon
-                    name="check-circle"
-                    size={25}
-                    color={item.answer ? '#32a852' : '#a8a8a8'}
-                  />
-                  <TitleHeader color={item.answer}>
-                    {item.answer !== null ? 'Respondido' : 'Sem resposta'}
-                  </TitleHeader>
-                </HeaderLeft>
-                <DateHourHeader>{item.dateFormatted}</DateHourHeader>
-              </ContentHeader>
-              <TextContent>{item.question}</TextContent>
-            </Content>
-          )}
-        />
-      )}
+      <FlatList
+        showsVerticalScrollIndicator={false}
+        data={helps}
+        keyExtractor={item => String(item.id)}
+        refreshing={refresh}
+        onRefresh={pageRefresh}
+        onEndReachedThreshold={0.1}
+        onEndReached={() => {
+          if (helps.length > 3) {
+            loadMore();
+          }
+        }}
+        renderItem={({ item }) => (
+          <Content
+            onPress={() => navigation.navigate('AnswerHelp', { help: item })}
+          >
+            <ContentHeader>
+              <HeaderLeft>
+                <Icon
+                  name="check-circle"
+                  size={25}
+                  color={item.answer ? '#32a852' : '#a8a8a8'}
+                />
+                <TitleHeader color={item.answer}>
+                  {item.answer !== null ? 'Respondido' : 'Sem resposta'}
+                </TitleHeader>
+              </HeaderLeft>
+              <DateHourHeader>{item.dateFormatted}</DateHourHeader>
+            </ContentHeader>
+            <TextContent>{item.question}</TextContent>
+          </Content>
+        )}
+      />
       {loading && (
         <Loading>
           <ActivityIndicator size="large" color="#fc2b6e" />

@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { withNavigationFocus } from 'react-navigation';
 import { formatRelative, parseISO } from 'date-fns';
 import pt from 'date-fns/locale/pt';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator } from 'react-native';
 
 import api from '~/services/api';
 import Button from '~/components/Button';
@@ -36,8 +36,7 @@ function Checkin({ isFocused }) {
   async function handleNewCheckin() {
     try {
       setLoading(true);
-      const { data } = await api.post(`/checkins/${student_id}`);
-      setStudents(...students, data);
+      await api.post(`/checkins/${student_id}`);
       loadCheckins();
       setLoading(false);
       alert('Checkin realizado com sucesso !');
@@ -56,19 +55,27 @@ function Checkin({ isFocused }) {
 
   return (
     <Container>
-      <Button loading={loading} background="confirm" onPress={handleNewCheckin}>
+      <Button
+        loading={loading}
+        background="confirm"
+        onPress={() => handleNewCheckin()}
+      >
         Novo check-in
       </Button>
-      <FlatList
-        data={students}
-        keyExtractor={(item, index) => String(index)}
-        renderItem={item => (
-          <ItemListCheckin>
-            <NumberCheckin>Check-in #{item.index}</NumberCheckin>
-            <DateCheckin>{item.item}</DateCheckin>
-          </ItemListCheckin>
-        )}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#fc2b6e" />
+      ) : (
+        <FlatList
+          data={students}
+          keyExtractor={(item, index) => String(index)}
+          renderItem={item => (
+            <ItemListCheckin>
+              <NumberCheckin>Check-in #{item.index + 1}</NumberCheckin>
+              <DateCheckin>{item.item}</DateCheckin>
+            </ItemListCheckin>
+          )}
+        />
+      )}
     </Container>
   );
 }
