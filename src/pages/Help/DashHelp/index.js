@@ -22,7 +22,6 @@ import {
 } from './styles';
 
 function DashHelp({ navigation, isFocused }) {
-  console.tron.log(isFocused);
   const student_id = useSelector(state => state.auth.student_id.id);
 
   const [helps, setHelps] = useState([]);

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gympoint</string>
+    <string name="CodePushDeploymentKey" moduleConfig="true" translatable="false">a82e3f3770f5f12cfe6a504b4711e54642e1ef65</string>
 </resources>
